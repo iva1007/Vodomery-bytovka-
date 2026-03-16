@@ -67,6 +67,20 @@ document.querySelectorAll('.card').forEach((card,index)=>{
 
    localStorage.setItem('vodomery',JSON.stringify(ulozene));
 
+  // automatický presun nového stavu na predošlý pri načítaní
+window.addEventListener('load', ()=>{
+  let ulozene=JSON.parse(localStorage.getItem('vodomery'))||[];
+  ulozene.forEach(zaznam=>{
+    if(zaznam.nb!==undefined){
+      zaznam.pb = zaznam.nb;
+    }
+    if(zaznam.nk!==undefined){
+      zaznam.pk = zaznam.nk;
+    }
+  });
+  localStorage.setItem('vodomery',JSON.stringify(ulozene));
+});
+  
    prepocet();
  });
 });

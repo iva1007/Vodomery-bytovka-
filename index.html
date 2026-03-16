@@ -27,27 +27,30 @@ button{padding:10px;width:100%;margin-top:10px}
 
 <script>
 const byty=document.getElementById('byty');
+let ulozene=JSON.parse(localStorage.getItem('vodomery'))||[];
 
 for(let i=1;i<=6;i++){
+ let data=ulozene[i-1]||{};
  byty.innerHTML+=`
  <div class="card">
  <h3>Byt ${i}</h3>
- <input placeholder="Meno vlastníka">
- <input type="number" placeholder="Predošlý stav byt" class="pb">
- <input type="number" placeholder="Nový stav byt" class="nb">
- <input type="number" placeholder="Predošlá kotolňa" class="pk">
- <input type="number" placeholder="Nová kotolňa" class="nk">
+ <input placeholder="Meno vlastníka" value="${data.meno||''}" class="meno">
+ <input type="number" placeholder="Predošlý stav byt" value="${data.pb||''}" class="pb">
+ <input type="number" placeholder="Nový stav byt" value="${data.nb||''}" class="nb">
+ <input type="number" placeholder="Predošlá kotolňa" value="${data.pk||''}" class="pk">
+ <input type="number" placeholder="Nová kotolňa" value="${data.nk||''}" class="nk">
  <div class="vysledok">Spolu: 0 €</div>
  </div>`;
 }
 
-document.querySelectorAll('.card').forEach(card=>{
+document.querySelectorAll('.card').forEach((card,index)=>{
  card.addEventListener('input',()=>{
    let cena=parseFloat(document.getElementById('cena').value)||0;
    let pb=parseFloat(card.querySelector('.pb').value)||0;
    let nb=parseFloat(card.querySelector('.nb').value)||0;
    let pk=parseFloat(card.querySelector('.pk').value)||0;
    let nk=parseFloat(card.querySelector('.nk').value)||0;
+   let meno=card.querySelector('.meno').value;
 
    let byt=(nb-pb)*cena;
    let kot=(nk-pk)*cena;
@@ -55,6 +58,12 @@ document.querySelectorAll('.card').forEach(card=>{
 
    card.querySelector('.vysledok').innerHTML=
    `Byt ${(nb-pb)} m³ | Kotolňa ${(nk-pk)} m³ <br><b>Spolu ${spolu.toFixed(2)} €</b>`;
+
+   ulozene[index]={
+    meno,pb,nb,pk,nk
+   };
+
+   localStorage.setItem('vodomery',JSON.stringify(ulozene));
 
    prepocet();
  });

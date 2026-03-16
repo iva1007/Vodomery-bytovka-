@@ -24,7 +24,9 @@ button{padding:10px;width:100%;margin-top:10px}
 <div id="byty"></div>
 
 <h3 id="sucet">Celá bytovka spolu: 0 €</h3>
-
+<button onclick="ulozMesiac()">Uložiť mesačný odpis</button>
+<div id="historia"></div>
+ 
 <script>
 const byty=document.getElementById('byty');
 let ulozene=JSON.parse(localStorage.getItem('vodomery'))||[];
@@ -77,6 +79,37 @@ function prepocet(){
  });
  document.getElementById('sucet').innerText='Celá bytovka spolu: '+total.toFixed(2)+' €';
 }
+let historia = JSON.parse(localStorage.getItem('historia')) || [];
+
+function ulozMesiac(){
+ let datum = document.getElementById('datum').value;
+ if(!datum) return;
+
+ let zaznam = [];
+ document.querySelectorAll('.card').forEach((card,index)=>{
+   let vysledok = card.querySelector('.vysledok').innerText;
+   zaznam.push(`Byt ${index+1}: ${vysledok}`);
+ });
+
+ historia.unshift({
+   datum: datum,
+   data: zaznam
+ });
+
+ localStorage.setItem('historia', JSON.stringify(historia));
+ zobrazHistoriu();
+}
+
+function zobrazHistoriu(){
+ let div = document.getElementById('historia');
+ div.innerHTML = '';
+
+ historia.forEach(m=>{
+   div.innerHTML += `<div class="card"><b>${m.datum}</b><br>${m.data.join('<br>')}</div>`;
+ });
+}
+
+zobrazHistoriu();
 </script>
 
 </body>

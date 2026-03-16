@@ -1,12 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="sk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vodomery bytovka</title>
+<style>
+body{font-family:Arial;padding:20px;max-width:500px;margin:auto}
+input{width:100%;padding:8px;margin:4px 0}
+.card{border:1px solid #ccc;padding:10px;margin:10px 0;border-radius:10px}
+button{padding:10px;width:100%;margin-top:10px}
+</style>
 </head>
 <body>
-<h1>Vodomery bytovka</h1>
-<p>Appka je pripravená na ďalší krok.</p>
+
+<h2>Vodomery bytovka</h2>
+
+<label>Dátum:</label>
+<input type="date" id="datum">
+
+<label>Cena za m³ (€):</label>
+<input type="number" id="cena" value="2.35">
+
+<div id="byty"></div>
+
+<h3 id="sucet">Celá bytovka spolu: 0 €</h3>
+
+<script>
+const byty=document.getElementById('byty');
+
+for(let i=1;i<=6;i++){
+ byty.innerHTML+=`
+ <div class="card">
+ <h3>Byt ${i}</h3>
+ <input placeholder="Meno vlastníka">
+ <input type="number" placeholder="Predošlý stav byt" class="pb">
+ <input type="number" placeholder="Nový stav byt" class="nb">
+ <input type="number" placeholder="Predošlá kotolňa" class="pk">
+ <input type="number" placeholder="Nová kotolňa" class="nk">
+ <div class="vysledok">Spolu: 0 €</div>
+ </div>`;
+}
+
+document.querySelectorAll('.card').forEach(card=>{
+ card.addEventListener('input',()=>{
+   let cena=parseFloat(document.getElementById('cena').value)||0;
+   let pb=parseFloat(card.querySelector('.pb').value)||0;
+   let nb=parseFloat(card.querySelector('.nb').value)||0;
+   let pk=parseFloat(card.querySelector('.pk').value)||0;
+   let nk=parseFloat(card.querySelector('.nk').value)||0;
+
+   let byt=(nb-pb)*cena;
+   let kot=(nk-pk)*cena;
+   let spolu=byt+kot;
+
+   card.querySelector('.vysledok').innerHTML=
+   `Byt ${(nb-pb)} m³ | Kotolňa ${(nk-pk)} m³ <br><b>Spolu ${spolu.toFixed(2)} €</b>`;
+
+   prepocet();
+ });
+});
+
+function prepocet(){
+ let total=0;
+ document.querySelectorAll('.vysledok').forEach(v=>{
+   let txt=v.innerText.match(/Spolu ([0-9.]+)/);
+   if(txt) total+=parseFloat(txt[1]);
+ });
+ document.getElementById('sucet').innerText='Celá bytovka spolu: '+total.toFixed(2)+' €';
+}
+</script>
+
 </body>
 </html>
